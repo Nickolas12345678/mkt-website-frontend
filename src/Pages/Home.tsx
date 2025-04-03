@@ -51,7 +51,7 @@ const Home = () => {
                 />
             </section>
 
-            <section className="bg-gray-50 py-16 px-6 w-full mb-16">
+            <section className="bg-gray-50 py-16 px-6 w-full mb-16 " id="about-mkt-section">
                 <div className="w-full mx-auto text-center">
                     <h2 className="text-4xl font-bold text-orange-600 mb-6">Про МКТ</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
