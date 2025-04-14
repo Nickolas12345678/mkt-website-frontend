@@ -1,10 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-interface Category {
-    id: number;
-    name: string;
-}
+import { useEffect, useState } from "react";
 
 interface Product {
     id: number;
@@ -13,298 +7,253 @@ interface Product {
     price: number;
     quantity: number;
     imageURL: string;
-    category: Category;
+    category: {
+        id: number;
+        name: string;
+    };
 }
 
-const ProductsPage: React.FC = () => {
+interface Category {
+    id: number;
+    name: string;
+}
+
+const ProductsPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [newProduct, setNewProduct] = useState<Product>({
-        id: 0,
-        name: '',
-        description: '',
+    const [modalOpen, setModalOpen] = useState(false);
+    const [form, setForm] = useState({
+        name: "",
+        description: "",
         price: 0,
         quantity: 0,
-        imageURL: '',
-        category: { id: 0, name: '' },
+        imageURL: "",
+        categoryId: 1,
     });
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [editId, setEditId] = useState<number | null>(null);
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const loadProducts = async () => {
+        const res = await fetch(`http://localhost:8080/products?page=${page}&size=13&sortBy=id`);
+        const data = await res.json();
+        setProducts(data.content);
+        setTotalPages(data.totalPages);
+    };
+
+    const loadCategories = async () => {
+        const res = await fetch("http://localhost:8080/categories");
+        const data = await res.json();
+        setCategories(data);
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        loadProducts();
+        loadCategories();
+    }, [page]);
+
+    const handleSubmit = async () => {
+        try {
+            const url = editId
+                ? `http://localhost:8080/products/${editId}`
+                : `http://localhost:8080/products`;
+
+            const method = editId ? "PUT" : "POST";
+
+            await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+
+            setModalOpen(false);
+            setEditId(null);
+            resetForm();
+            loadProducts();
+            alert(editId ? "Товар успішно оновлено!" : "Товар успішно додано!");
+        }
+        catch {
+            alert("Помилка при збереженні товару");
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (window.confirm("Ви дійсно хочете видалити цей товар?")) {
             try {
-                const token = localStorage.getItem("jwt");
-                const response = await axios.get('http://localhost:8080/products', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setProducts(response.data.content);
-            } catch {
-                setError('Failed to load products');
-            } finally {
-                setLoading(false);
+                await fetch(`http://localhost:8080/products/${id}`, { method: "DELETE" });
+                loadProducts();
+                alert("Товар успішно видалено!");
             }
-        };
-
-        const fetchCategories = async () => {
-            try {
-                const token = localStorage.getItem("jwt");
-                const response = await axios.get('http://localhost:8080/categories', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setCategories(response.data);
-            } catch {
-                setError('Failed to load categories');
+            catch {
+                alert("Помилка при видаленні товару");
             }
-        };
-
-        fetchProducts();
-        fetchCategories();
-    }, []);
-
-    const handleCreateProduct = async () => {
-        try {
-            const token = localStorage.getItem("jwt");
-            const response = await axios.post('http://localhost:8080/products', newProduct, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setProducts([...products, response.data]);
-            setNewProduct({
-                id: 0,
-                name: '',
-                description: '',
-                price: 0,
-                quantity: 0,
-                imageURL: '',
-                category: { id: 0, name: '' },
-            });
-        } catch {
-            setError('Failed to create product');
         }
     };
 
-    const handleUpdateProduct = async (id: number) => {
-        if (!editingProduct || !id) {
-            alert("Невірний ID продукту");
-            return;
-        }
-
-        const updatedProduct = {
-            ...editingProduct,
-            categoryId: editingProduct.category.id,
-        };
-
-        try {
-            const token = localStorage.getItem("jwt");
-            const response = await axios.put(
-                `http://localhost:8080/products/${id}`,
-                updatedProduct,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            setProducts(
-                products.map((product) =>
-                    product.id === id ? { ...product, ...response.data } : product
-                )
-            );
-            setEditingProduct(null);
-        } catch {
-            setError('Не вдалося оновити продукт');
-        }
+    const openEditModal = (product: Product) => {
+        setEditId(product.id);
+        setForm({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            quantity: product.quantity,
+            imageURL: product.imageURL,
+            categoryId: product.category.id,
+        });
+        setModalOpen(true);
     };
 
-
-
-
-
-
-    const handleDeleteProduct = async (id: number) => {
-        try {
-            const token = localStorage.getItem("jwt");
-            await axios.delete(`http://localhost:8080/products/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setProducts(products.filter((product) => product.id !== id));
-        } catch {
-            setError('Failed to delete product');
-        }
+    const resetForm = () => {
+        setForm({
+            name: "",
+            description: "",
+            price: 0,
+            quantity: 0,
+            imageURL: "",
+            categoryId: 1,
+        });
     };
-
-    const handleEditProduct = (product: Product) => {
-        setEditingProduct(product);
-    };
-
-
-    const handleCancelEdit = () => {
-        setEditingProduct(null);
-    };
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 w-full text-black">
             <div className="mt-6 bg-white p-6 rounded-lg shadow-md w-full">
-                <h2 className="text-xl font-semibold text-gray-800">Список товарів</h2>
-                <table className="w-full mt-4 border border-gray-300 rounded-lg overflow-hidden">
-                    <thead>
-                        <tr className="bg-gray-700 text-white">
-                            <th className="p-3 text-left">ID</th>
-                            <th className="p-3 text-left">Фото</th>
-                            <th className="p-3 text-left">Назва</th>
-                            <th className="p-3 text-left">Опис</th>
-                            <th className="p-3 text-left">Ціна</th>
-                            <th className="p-3 text-left">Кількість</th>
-                            <th className="p-3 text-left">Категорія</th>
-                            <th className="p-3 text-center">Дії</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products.map((product, index) => (
-                            <tr
-                                key={product.id}
-                                className={`border-b ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
-                            >
-                                <td className="p-3 text-gray-900 font-bold">{product.id}</td>
-                                <td className="p-3">
-                                    <img
-                                        src={product.imageURL}
-                                        alt={product.name}
-                                        className="w-20 h-20 object-contain"
-                                    />
-                                </td>
-                                <td className="p-3 text-gray-800">{product.name}</td>
-                                <td className="p-3 text-gray-700">{product.description}</td>
-                                <td className="p-3 text-gray-600">{product.price}</td>
-                                <td className="p-3 text-gray-600">{product.quantity}</td>
-                                <td className="p-3 text-gray-600">{product.category.name}</td>
-                                <td className="p-3 text-center">
-                                    <button
-                                        onClick={() => handleEditProduct(product)}
-                                        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition w-full mb-2"
-                                    >
-                                        Редагувати
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteProduct(product.id)}
-                                        className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition w-full"
-                                    >
-                                        Видалити
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Список товарів</h2>
 
-                <div className="mt-4">
-                    <button
-                        onClick={() => setEditingProduct({ id: 0, name: '', description: '', price: 0, quantity: 0, imageURL: '', category: { id: 0, name: '' } })}
-                        className="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition w-full text-lg"
-                    >
-                        Додати товар
-                    </button>
+                <div className="overflow-x-hidden">
+                    <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
+                        <thead>
+                            <tr className="bg-gray-700 text-white">
+                                <th className="p-3 text-left">ID</th>
+                                <th className="p-3 text-left">Фото</th>
+                                <th className="p-3 text-left">Назва</th>
+                                <th className="p-3 text-left">Опис</th>
+                                <th className="p-3 text-left">Ціна</th>
+                                <th className="p-3 text-left">Кількість</th>
+                                <th className="p-3 text-left">Категорія</th>
+                                <th className="p-3 text-center">Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {products.map((product, i) => (
+                                <tr key={product.id} className={`border-b ${i % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
+                                    <td className="p-3 font-semibold">{product.id}</td>
+                                    <td className="p-3">
+                                        <img
+                                            src={product.imageURL}
+                                            alt={product.name}
+                                            className="w-24 h-24 object-contain border rounded"
+                                        />
+                                    </td>
+                                    <td className="p-3">{product.name}</td>
+                                    <td className="p-3">{product.description}</td>
+                                    <td className="p-3">{product.price}</td>
+                                    <td className="p-3">{product.quantity}</td>
+                                    <td className="p-3">{product.category.name}</td>
+                                    <td className="p-3 text-center">
+                                        <button
+                                            onClick={() => openEditModal(product)}
+                                            className="bg-yellow-500 text-white px-4 py-2 rounded w-full mb-2"
+                                        >
+                                            Редагувати
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(product.id)}
+                                            className="bg-red-500 text-white px-4 py-2 rounded w-full"
+                                        >
+                                            Видалити
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
 
-                {editingProduct && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                            <h2 className="text-xl font-bold mb-4 text-center text-black">
-                                {editingProduct.id === 0 ? 'Додати товар' : 'Редагувати товар'}
-                            </h2>
-                            <input
-                                type="text"
-                                placeholder="Назва"
-                                className="w-full p-2 border rounded mb-2 bg-white text-black"
-                                value={editingProduct.name}
-                                onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
-                            />
-                            <textarea
-                                placeholder="Опис"
-                                className="w-full p-2 border rounded mb-2 bg-white text-black"
-                                value={editingProduct.description}
-                                onChange={(e) =>
-                                    setEditingProduct({ ...editingProduct, description: e.target.value })
-                                }
-                            />
-                            <input
-                                type="number"
-                                placeholder="Ціна"
-                                className="w-full p-2 border rounded mb-2 bg-white text-black"
-                                value={editingProduct.price}
-                                onChange={(e) =>
-                                    setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) })
-                                }
-                            />
-                            <input
-                                type="number"
-                                placeholder="Кількість"
-                                className="w-full p-2 border rounded mb-2 bg-white text-black"
-                                value={editingProduct.quantity}
-                                onChange={(e) =>
-                                    setEditingProduct({ ...editingProduct, quantity: parseInt(e.target.value) })
-                                }
-                            />
-                            <input
-                                type="text"
-                                placeholder="URL зображення"
-                                className="w-full p-2 border rounded mb-2 bg-white text-black"
-                                value={editingProduct.imageURL}
-                                onChange={(e) =>
-                                    setEditingProduct({ ...editingProduct, imageURL: e.target.value })
-                                }
-                            />
-                            <select
-                                value={editingProduct.category.id}
-                                onChange={(e) =>
-                                    setEditingProduct({
-                                        ...editingProduct,
-                                        category: categories.find(
-                                            (cat) => cat.id === Number(e.target.value)
-                                        ) || { id: 0, name: '' },
-                                    })
-                                }
-                                className="w-full p-2 border rounded mb-2 bg-white text-black"
-                            >
-                                <option value="">Оберіть категорію</option>
-                                {categories.map((category) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
+                <div className="flex justify-center mt-6 gap-2">
+                    {[...Array(totalPages)].map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setPage(i)}
+                            className={`px-3 py-1 rounded ${page === i ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
+                </div>
 
-                            <button
-                                onClick={() => (editingProduct.id === 0 ? handleCreateProduct() : handleUpdateProduct(editingProduct.id))}
-                                className="bg-blue-500 text-white px-4 py-2 rounded w-full mb-2"
-                            >
-                                Зберегти
-                            </button>
-                            <button
-                                onClick={handleCancelEdit}
-                                className="bg-gray-400 text-white px-4 py-2 rounded w-full"
-                            >
+                <button
+                    onClick={() => {
+                        setEditId(null);
+                        resetForm();
+                        setModalOpen(true);
+                    }}
+                    className="bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 mt-6 w-full text-lg"
+                >
+                    Додати товар
+                </button>
+            </div>
+
+            {modalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                        <h2 className="text-xl font-bold mb-4 text-center">{
+                            editId ? "Редагувати товар" : "Додати товар"
+                        }</h2>
+                        <input
+                            className="w-full p-2 border rounded mb-2 bg-white text-black"
+                            placeholder="Назва"
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        />
+                        <textarea
+                            className="w-full p-2 border rounded mb-2 bg-white text-black"
+                            placeholder="Опис"
+                            value={form.description}
+                            onChange={(e) => setForm({ ...form, description: e.target.value })}
+                        />
+                        <input
+                            type="number"
+                            className="w-full p-2 border rounded mb-2 bg-white text-black"
+                            placeholder="Ціна"
+                            value={form.price}
+                            onChange={(e) => setForm({ ...form, price: e.target.value ? +e.target.value : 0 })} // Перевірка на порожнє значення
+                        />
+
+                        <input
+                            type="number"
+                            className="w-full p-2 border rounded mb-2 bg-white text-black"
+                            placeholder="Кількість"
+                            value={form.quantity}
+                            onChange={(e) => setForm({ ...form, quantity: e.target.value ? +e.target.value : 0 })} // Перевірка на порожнє значення
+                        />
+                        <input
+                            className="w-full p-2 border rounded mb-2 bg-white text-black"
+                            placeholder="URL зображення"
+                            value={form.imageURL}
+                            onChange={(e) => setForm({ ...form, imageURL: e.target.value })}
+                        />
+                        <select
+                            className="w-full p-2 border rounded mb-4 bg-white text-black"
+                            value={form.categoryId}
+                            onChange={(e) => setForm({ ...form, categoryId: +e.target.value })}
+                        >
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex justify-end gap-2">
+                            <button onClick={() => setModalOpen(false)} className="px-4 py-2 bg-gray-300 rounded">
                                 Скасувати
+                            </button>
+                            <button onClick={handleSubmit} className="px-4 py-2 bg-green-600 text-white rounded">
+                                {editId ? "Зберегти" : "Додати"}
                             </button>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

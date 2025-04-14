@@ -40,7 +40,6 @@ const CartPage = () => {
         fetchCart();
     }, []);
 
-    // Remove product from cart
     const removeFromCart = async (productId: number) => {
         try {
             const token = localStorage.getItem("jwt");
@@ -58,7 +57,6 @@ const CartPage = () => {
         }
     };
 
-    // Modify product quantity in cart
     const modifyQuantity = async (productId: number, action: "increase" | "decrease") => {
         try {
             const token = localStorage.getItem("jwt");
@@ -94,7 +92,6 @@ const CartPage = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            // Refresh cart after adding a new product
             const response = await axios.get<Cart>("http://localhost:8080/api/cart", {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -112,7 +109,7 @@ const CartPage = () => {
             <div className="mt-6 bg-white p-6 rounded-lg shadow-md w-full md:w-4/5 lg:w-2/3 xl:w-1/2">
                 <h2 className="text-xl font-semibold text-black mb-4">Кошик</h2>
 
-                {/* Cart Table */}
+
                 <table className="w-full mt-4 border border-gray-300 rounded-lg overflow-hidden">
                     <thead>
                         <tr className="bg-gray-700 text-white">
@@ -163,7 +160,7 @@ const CartPage = () => {
                     </tbody>
                 </table>
 
-                {/* Add Product Button */}
+
                 <button
                     onClick={() => setShowModal(true)}
                     className="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition w-full mt-4 text-lg"
