@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const token = localStorage.getItem("jwt");
         if (token) {
             axios
-                .get("http://localhost:8080/api/users/profile", {
+                .get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/profile", {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 .then((res) => {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem("jwt", token);
         setLoading(true);
         axios
-            .get("http://localhost:8080/api/users/profile", {
+            .get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/profile", {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then((res) => {
