@@ -14,7 +14,7 @@ const ProfilePage: React.FC = () => {
         const token = localStorage.getItem('jwt');
         if (token) {
             try {
-                const response = await axios.get("http://localhost:8080/api/users/profile", {
+                const response = await axios.get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/profile", {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                     },

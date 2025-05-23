@@ -22,7 +22,7 @@ const ServicePage = () => {
     const fetchServices = () => {
         setLoading(true)
         axios
-            .get('http://localhost:8080/api/services')
+            .get('https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/services')
             .then((res) => {
                 setServices(res.data)
                 setLoading(false)
@@ -52,7 +52,7 @@ const ServicePage = () => {
 
         try {
             await axios.post(
-                'http://localhost:8080/api/service-requests',
+                'https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/service-requests',
                 {
                     repairService: { id: serviceId },
                     description: description,

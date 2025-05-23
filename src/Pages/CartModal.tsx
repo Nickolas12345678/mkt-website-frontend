@@ -27,7 +27,7 @@ const CartPage = () => {
                     alert("Будь ласка, увійдіть до системи!");
                     return;
                 }
-                const response = await axios.get<Cart>("http://localhost:8080/api/cart", {
+                const response = await axios.get<Cart>("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/cart", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setCart(response.data);
@@ -44,7 +44,7 @@ const CartPage = () => {
         try {
             const token = localStorage.getItem("jwt");
             if (!token) return;
-            await axios.delete(`http://localhost:8080/api/cart/${productId}`, {
+            await axios.delete(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/cart/${productId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setCart(prevCart => ({
@@ -63,13 +63,13 @@ const CartPage = () => {
             if (!token) return;
 
             await axios.post(
-                `http://localhost:8080/api/cart/${action}/${productId}`,
+                `https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/cart/${action}/${productId}`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
 
-            const response = await axios.get<Cart>("http://localhost:8080/api/cart", {
+            const response = await axios.get<Cart>("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/cart", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setCart(response.data);
@@ -87,12 +87,12 @@ const CartPage = () => {
             if (!token) return;
 
             await axios.post(
-                "http://localhost:8080/api/cart/add",
+                "https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/cart/add",
                 { productId: newProduct.productId, quantity: newProduct.quantity },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            const response = await axios.get<Cart>("http://localhost:8080/api/cart", {
+            const response = await axios.get<Cart>("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/cart", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setCart(response.data);

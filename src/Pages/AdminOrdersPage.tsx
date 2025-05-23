@@ -1,166 +1,3 @@
-// import { useEffect, useState, useCallback } from "react";
-// import axios from "axios";
-// import { useAuth } from "../context/AuthContext";
-
-// interface Product {
-//     id: number;
-//     name: string;
-//     price: number;
-//     quantity: number;
-// }
-
-// interface Order {
-//     id: number;
-//     description: string;
-//     status: string;
-//     totalAmount: number;
-//     totalItemsAmount: number;
-//     deliveryMethod: "PICKUP" | "DELIVERY";
-//     deliveryAddress?: string;
-//     user: {
-//         id: number;
-//         name: string;
-//         email: string;
-//     };
-//     items: {
-//         product: Product;
-//         quantity: number;
-//         price: number;
-//     }[];
-// }
-
-// const Orders = () => {
-//     const { isAdmin } = useAuth();
-//     const [orders, setOrders] = useState<Order[]>([]);
-//     const [loading, setLoading] = useState(true);
-//     const token = localStorage.getItem("jwt");
-
-//     const fetchOrders = useCallback(async () => {
-//         try {
-//             const res = await axios.get("http://localhost:8080/api/orders", {
-//                 headers: { Authorization: `Bearer ${token}` },
-//             });
-//             setOrders(res.data);
-//         } catch (err) {
-//             console.error("Failed to fetch orders", err);
-//         } finally {
-//             setLoading(false);
-//         }
-//     }, [token]);
-
-//     useEffect(() => {
-//         if (isAdmin) {
-//             fetchOrders();
-//         } else {
-//             setLoading(false);
-//         }
-//     }, [isAdmin, fetchOrders]);
-
-//     const updateStatus = async (orderId: number, newStatus: string) => {
-//         try {
-//             await axios.put(
-//                 `http://localhost:8080/api/orders/update-status/${orderId}`,
-//                 { status: newStatus },
-//                 {
-//                     headers: { Authorization: `Bearer ${token}` },
-//                 }
-//             );
-//             fetchOrders();
-//         } catch (err) {
-//             console.error("Error updating status", err);
-//         }
-//     };
-
-//     if (!isAdmin)
-//         return <div className="text-center mt-10">Доступ лише для адміністратора</div>;
-
-//     if (loading)
-//         return <div className="text-center mt-10">Завантаження...</div>;
-
-//     return (
-//         <div className="flex justify-center items-center min-h-screen bg-gray-100 w-full text-black">
-//             <div className="mt-6 bg-white p-6 rounded-lg shadow-md w-full">
-//                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Список замовлень</h2>
-
-//                 <div className="overflow-x-auto">
-//                     <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
-//                         <thead>
-//                             <tr className="bg-gray-700 text-white">
-//                                 <th className="p-3 text-left">ID</th>
-//                                 <th className="p-3 text-left">Користувач</th>
-//                                 <th className="p-3 text-left">Товари</th>
-//                                 <th className="p-3 text-left">Вартість замовлення</th>
-//                                 <th className="p-3 text-left">Метод отримання</th>
-//                                 <th className="p-3 text-left">Статус</th>
-//                                 <th className="p-3 text-center">Оновити</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             {orders.map((order, i) => (
-//                                 <tr
-//                                     key={order.id}
-//                                     className={`border-b ${i % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
-//                                 >
-//                                     <td className="p-3 font-semibold">{order.id}</td>
-//                                     <td className="p-3">
-//                                         <div>ID: {order.user.id}</div>
-//                                         <div>{order.user.name}</div>
-//                                         <div>{order.user.email}</div>
-//                                     </td>
-//                                     <td className="p-3">
-//                                         <ul>
-//                                             {order.items.map((item, idx) => (
-//                                                 <li key={idx}>
-//                                                     {item.product.name} (x{item.quantity}) - {item.product.price} грн
-//                                                 </li>
-//                                             ))}
-//                                         </ul>
-//                                     </td>
-//                                     <td className="p-3">
-//                                         {order.items.reduce((sum, item) => sum + item.price * item.quantity, 0)} грн
-//                                     </td>
-//                                     <td className="p-3">
-//                                         <div>
-//                                             {order.deliveryMethod === "PICKUP" ? (
-//                                                 <>
-//                                                     <div>Метод отримання: Самовивіз</div>
-//                                                     <div>Пункт самовивозу: {order.deliveryAddress || "Невідомо"}</div>
-//                                                 </>
-//                                             ) : (
-//                                                 <>
-//                                                     <div>Метод отримання: Доставка</div>
-//                                                     <div>Адреса доставки: {order.deliveryAddress || "Невідомо"}</div>
-//                                                 </>
-//                                             )}
-//                                         </div>
-//                                     </td>
-//                                     <td className="p-3">{order.status}</td>
-//                                     <td className="p-3 text-center">
-//                                         <select
-//                                             onChange={(e) => updateStatus(order.id, e.target.value)}
-//                                             defaultValue={order.status}
-//                                             className="w-full border border-gray-300 p-2 rounded-md bg-white"
-//                                         >
-//                                             <option value="PENDING">PENDING</option>
-//                                             <option value="SHIPPED">SHIPPED</option>
-//                                             <option value="DELIVERED">DELIVERED</option>
-//                                             <option value="CANCELED">CANCELED</option>
-//                                             <option value="PICKUP_READY">PICKUP_READY</option>
-//                                         </select>
-//                                     </td>
-//                                 </tr>
-//                             ))}
-//                         </tbody>
-//                     </table>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Orders;
-
-
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
@@ -215,7 +52,7 @@ const Orders = () => {
 
     const fetchOrders = useCallback(async () => {
         try {
-            const res = await axios.get("http://localhost:8080/api/orders", {
+            const res = await axios.get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/orders", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setOrders(res.data || []);
@@ -237,7 +74,7 @@ const Orders = () => {
     const updateStatus = async (orderId: number, newStatus: string) => {
         try {
             await axios.put(
-                `http://localhost:8080/api/orders/update-status/${orderId}`,
+                `https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/orders/update-status/${orderId}`,
                 { status: newStatus },
                 {
                     headers: { Authorization: `Bearer ${token}` },
@@ -334,27 +171,7 @@ const Orders = () => {
                                         )}
                                     </td>
                                     <td className="p-3 align-top">{getUkrainianStatus(order.status)}</td>
-                                    {/* <td className="p-3 text-center align-top">
-                                        <select
-                                            onChange={(e) => updateStatus(order.id, e.target.value)}
-                                            value={order.status}
-                                            disabled={order.status === "DELIVERED" || order.status === "CANCELED"}
-                                            className="min-w-[180px] w-max border border-gray-300 p-2 rounded-md bg-white"
-                                        >
-                                            {getFullStatusList(order.deliveryMethod)
-                                                .filter((statusOption) => statusOption.value !== "CANCELED")
-                                                .map((statusOption) => (
-                                                    <option
-                                                        key={statusOption.value}
-                                                        value={statusOption.value}
-                                                        disabled={isStatusDisabled(order.status, statusOption.value, order.deliveryMethod)}
-                                                    >
-                                                        {statusOption.label}
-                                                    </option>
-                                                ))}
 
-                                        </select>
-                                    </td> */}
 
                                     <td className="p-3 text-center align-top">
                                         {order.status !== "CANCELED" && (

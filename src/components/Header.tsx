@@ -94,7 +94,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
 
     const fetchUserProfile = async (jwt: string) => {
         try {
-            const response = await axios.get("http://localhost:8080/api/users/profile", {
+            const response = await axios.get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/profile", {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },
@@ -113,7 +113,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
         const jwt = localStorage.getItem("jwt");
         if (jwt) {
             try {
-                const response = await axios.get("http://localhost:8080/cart", {
+                const response = await axios.get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/cart", {
                     headers: {
                         Authorization: `Bearer ${jwt}`,
                     },
@@ -152,7 +152,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
 
 
                 const response = await axios.post(
-                    "http://localhost:8080/api/orders/create",
+                    "https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/orders/create",
                     { deliveryAddress, deliveryMethod },
                     { headers: { Authorization: `Bearer ${jwt}` } }
                 );
@@ -221,7 +221,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
         const jwt = localStorage.getItem("jwt");
         if (jwt) {
             try {
-                await axios.post(`http://localhost:8080/cart/increase/${productId}`, {}, {
+                await axios.post(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/cart/increase/${productId}`, {}, {
                     headers: { Authorization: `Bearer ${jwt}` },
                 });
                 fetchCart();
@@ -235,7 +235,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
         const jwt = localStorage.getItem("jwt");
         if (jwt) {
             try {
-                await axios.post(`http://localhost:8080/cart/decrease/${productId}`, {}, {
+                await axios.post(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/cart/decrease/${productId}`, {}, {
                     headers: { Authorization: `Bearer ${jwt}` },
                 });
                 fetchCart();
@@ -249,7 +249,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
         const jwt = localStorage.getItem("jwt");
         if (jwt) {
             try {
-                await axios.delete(`http://localhost:8080/cart/remove/${productId}`, {
+                await axios.delete(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/cart/remove/${productId}`, {
                     headers: { Authorization: `Bearer ${jwt}` },
                 });
                 fetchCart();
@@ -263,7 +263,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
         const jwt = localStorage.getItem("jwt");
         if (jwt) {
             try {
-                await axios.delete("http://localhost:8080/cart/clear", {
+                await axios.delete("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/cart/clear", {
                     headers: { Authorization: `Bearer ${jwt}` },
                 });
                 fetchCart();
@@ -430,7 +430,7 @@ const Header = ({ isShopPage }: HeaderProps) => {
                                     <li key={item.id} className="flex justify-between mb-4 items-center border-b py-4">
                                         <div className="flex items-center gap-4">
                                             <img
-                                                src={item.product.imageURL.replace('http://localhost:8080/images/', '')}
+                                                src={item.product.imageURL.replace('https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/images/', '')}
                                                 alt={item.product.name}
                                                 className="w-16 h-16 object-contain rounded"
                                             />
@@ -583,9 +583,6 @@ const Header = ({ isShopPage }: HeaderProps) => {
                                         </div>
                                     </div>
                                 )}
-
-
-
                             </div>
                         </>
                     )}

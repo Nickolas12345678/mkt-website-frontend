@@ -23,7 +23,7 @@ const Home = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:8080/categories")
+            .get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/categories")
             .then((response) => {
                 setCategories(response.data);
                 setLoading(false);
@@ -94,7 +94,7 @@ const Home = () => {
                         {categories.slice(0, 5).map((category) => (
                             <div
                                 key={category.id}
-                                className="bg-white p-6 rounded-xl shadow-xl hover:shadow-2xl transition duration-300 hover:border-2 hover:border-orange-600 w-full sm:w-48 lg:w-64 cursor-pointer"
+                                className="bg-white p-6 rounded-xl shadow-xl hover:shadow-2xl transition duration-300 hover:border-2 hover:border-orange-600 w-full sm:w-48 lg:w-64"
                             >
                                 <img
                                     src={category.imageUrl}
@@ -117,7 +117,7 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className="bg-white py-16 px-6 w-full mb-16" id="service-center-section">
+            <section className="bg-gray-50 py-16 px-6 w-full mb-0" id="service-center-section" >
                 <div className="w-full mx-auto text-center">
                     <h2 className="text-4xl font-bold text-orange-600 mb-6">Сервісний центр</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">

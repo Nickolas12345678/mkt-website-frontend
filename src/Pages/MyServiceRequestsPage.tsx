@@ -21,7 +21,7 @@ const MyRepairRequestsPage = () => {
         if (!jwt) return;
 
         try {
-            const response = await axios.get("http://localhost:8080/api/service-requests/me", {
+            const response = await axios.get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/service-requests/me", {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },
@@ -76,7 +76,7 @@ const MyRepairRequestsPage = () => {
         if (!jwt) return;
 
         try {
-            await axios.delete(`http://localhost:8080/api/service-requests/${id}/cancel`, {
+            await axios.delete(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/service-requests/${id}/cancel`, {
                 headers: {
                     Authorization: `Bearer ${jwt}`,
                 },

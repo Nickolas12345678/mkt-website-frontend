@@ -24,7 +24,7 @@ const UsersPage = () => {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem("jwt");
-                const response = await axios.get<User[]>("http://localhost:8080/api/users/all", {
+                const response = await axios.get<User[]>("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/all", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUsers(response.data);
@@ -40,7 +40,7 @@ const UsersPage = () => {
         if (!window.confirm(`Ви впевнені, що хочете видалити користувача ${username}?`)) return;
         try {
             const token = localStorage.getItem("jwt");
-            await axios.delete(`http://localhost:8080/api/users/${userId}`, {
+            await axios.delete(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUsers(users.filter(user => user.id !== userId));
@@ -58,7 +58,7 @@ const UsersPage = () => {
         try {
             const token = localStorage.getItem("jwt");
             const response = await axios.put(
-                `http://localhost:8080/api/users/role/${userId}`,
+                `https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/users/role/${userId}`,
                 { role: newRole },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -73,7 +73,7 @@ const UsersPage = () => {
     const createUser = async () => {
         try {
             const token = localStorage.getItem("jwt");
-            const response = await axios.post("http://localhost:8080/auth/signup", newUser, {
+            const response = await axios.post("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/auth/signup", newUser, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUsers([...users, { ...newUser, id: response.data.id, role: response.data.role }]);

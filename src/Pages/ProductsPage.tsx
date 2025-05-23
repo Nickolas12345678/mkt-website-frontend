@@ -35,14 +35,14 @@ const ProductsPage = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     const loadProducts = async () => {
-        const res = await fetch(`http://localhost:8080/products?page=${page}&size=13&sortBy=id`);
+        const res = await fetch(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/products?page=${page}&size=13&sortBy=id`);
         const data = await res.json();
         setProducts(data.content);
         setTotalPages(data.totalPages);
     };
 
     const loadCategories = async () => {
-        const res = await fetch("http://localhost:8080/categories");
+        const res = await fetch("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/categories");
         const data = await res.json();
         setCategories(data);
     };
@@ -55,8 +55,8 @@ const ProductsPage = () => {
     const handleSubmit = async () => {
         try {
             const url = editId
-                ? `http://localhost:8080/products/${editId}`
-                : `http://localhost:8080/products`;
+                ? `https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/products/${editId}`
+                : `https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/products`;
 
             const method = editId ? "PUT" : "POST";
 
@@ -80,7 +80,7 @@ const ProductsPage = () => {
     const handleDelete = async (id: number) => {
         if (window.confirm("Ви дійсно хочете видалити цей товар?")) {
             try {
-                await fetch(`http://localhost:8080/products/${id}`, { method: "DELETE" });
+                await fetch(`https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/products/${id}`, { method: "DELETE" });
                 loadProducts();
                 alert("Товар успішно видалено!");
             }
@@ -216,7 +216,7 @@ const ProductsPage = () => {
                             className="w-full p-2 border rounded mb-2 bg-white text-black"
                             placeholder="Ціна"
                             value={form.price}
-                            onChange={(e) => setForm({ ...form, price: e.target.value ? +e.target.value : 0 })} // Перевірка на порожнє значення
+                            onChange={(e) => setForm({ ...form, price: e.target.value ? +e.target.value : 0 })}
                         />
 
                         <input
@@ -224,7 +224,7 @@ const ProductsPage = () => {
                             className="w-full p-2 border rounded mb-2 bg-white text-black"
                             placeholder="Кількість"
                             value={form.quantity}
-                            onChange={(e) => setForm({ ...form, quantity: e.target.value ? +e.target.value : 0 })} // Перевірка на порожнє значення
+                            onChange={(e) => setForm({ ...form, quantity: e.target.value ? +e.target.value : 0 })}
                         />
                         <input
                             className="w-full p-2 border rounded mb-2 bg-white text-black"
@@ -232,6 +232,7 @@ const ProductsPage = () => {
                             value={form.imageURL}
                             onChange={(e) => setForm({ ...form, imageURL: e.target.value })}
                         />
+
                         <select
                             className="w-full p-2 border rounded mb-4 bg-white text-black"
                             value={form.categoryId}

@@ -32,7 +32,7 @@ const SignupPage = () => {
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/auth/signup",
+                "https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/auth/signup",
                 formData
             );
 

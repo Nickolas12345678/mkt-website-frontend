@@ -38,7 +38,7 @@ const AdminServiceRequestsPage = () => {
 
     const fetchRequests = useCallback(async () => {
         try {
-            const res = await axios.get("http://localhost:8080/api/service-requests", {
+            const res = await axios.get("https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/service-requests", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setRequests(res.data);
@@ -60,7 +60,7 @@ const AdminServiceRequestsPage = () => {
     const updateStatus = async (id: number, newStatus: string) => {
         try {
             await axios.put(
-                `http://localhost:8080/api/service-requests/${id}/status?status=${newStatus}`,
+                `https://mkt-uzhhorod-f075ee5ee8b4.herokuapp.com/api/service-requests/${id}/status?status=${newStatus}`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
